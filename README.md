@@ -1,14 +1,28 @@
-# Option pricing
-## 1. American Option
-Usage of binomial model to predict option price
+# Option Pricing Toolkit
 
-## 2. European Option Pricing Tool
-A comprehensive Python tool for pricing European options using multiple models: Black-Scholes, Monte Carlo, Binomial Tree and SABR.  
-Automatic data fetching using Yahoo Finance.  
-It displays calculated greeks and visualisations of the model price comparison, the volatility smile and the error analysis.
+## What's new in this pass
 
-### Installation
-pip install numpy pandas matplotlib scipy yfinance
+- **`optionpricing/heston.py`** — Heston stochastic-volatility model, priced via the Fourier-integral formula. Calibration is vega-weighted and uses a fixed Gauss-Legendre quadrature (128 nodes, cached) instead of adaptive `quad` inside the optimizer loop — reduce time for calibration
 
-### main.py
-To use the tool, modify main.py (insert your stock ticker symbol, the option type, the strike price or None for ATM and the expiration index)
+- **`optionpricing/greeks.py`** — closed-form Black-Scholes Greeks, plus generic finite-difference Greeks for Heston
+
+- **`optionpricing/experiment.py`** 
+
+- **`optionpricing/data.py`** — 
+- **`optionpricing/surface.py`** - calibrates SABR and Heston independently at each of several expirations and builds comparable IV-surface grids (market vs SABR vs Heston)
+
+- **`optionpricing/plotting.py`** — price-vs-strike comparison, volatility smile (market + SABR fit + Heston fit), error summary (RMSE/MAE bars), error-by-strike, Greeks (Delta/Gamma/Theta/Vega BS vs Heston), 3D IV surfaces, and parameter/ATM term structures
+
+- **`tests/test_offline_smoke.py`** — an end-to-end test against a synthetic option chain (built from a known Heston process)
+
+## Running it
+
+```bash
+pip install -r requirements.txt
+python main.py
+```
+
+`main.py` runs two things for AAPL calls:
+
+1. **Multi-strike test** — one expiration, every liquid strike, all six models (Black-Scholes, Monte Carlo, Binomial European/American, SABR, Heston), plus error metrics and a Greeks comparison.
+2. **Surface test** — several expirations, SABR and Heston only, producing 3D IV surfaces and term-structure plots.
